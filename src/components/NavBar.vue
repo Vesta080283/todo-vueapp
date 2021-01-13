@@ -9,7 +9,7 @@
 
             <ul id="nav-mobile" class="right">
                  <li v-show="user">
-                    <router-link to="/todo">Список</router-link>
+                    <router-link to="/todo">Заметки</router-link>
                 </li>
                 <li v-show="!user">
                     <router-link to="/login">
