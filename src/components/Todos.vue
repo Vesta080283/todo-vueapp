@@ -5,12 +5,31 @@
         <h5 class="center-align"> Список заметок </h5>
         <ul class="collection with-header">
             <li class="collection-header">
-                <div class="row">
-                    <div class="input-field col s10">
-                        <input id="new_todo" type="text" class="validate" v-model="todo.title" />
+                <div class="column">                    
+                    <div class="row">                    
+                        <div class="input-field col s8">
+                            <span>Название</span>
+                            <input 
+                                id="new_todo" 
+                                type="text" 
+                                class="validate" 
+                                v-model="todo.title"
+                            />                        
+                        </div>
+                        <div class="input-field col s4">
+                            <button class="btn" @click="addTodo">
+                                <i class="material-icons md24">add</i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="input-field col s2">
-                        <button class="btn" @click="addTodo">+</button>
+                     <div class="input-field col s12">
+                        <span>Описание</span>
+                        <input 
+                            id="new_todo_info" 
+                            type="text" 
+                            class="validate" 
+                            v-model="todo.info"
+                        />                        
                     </div>
                 </div>
             </li>
@@ -20,19 +39,32 @@
                 :key="todo.id" 
                 :class="{ fade: todo.isCompleted }"
                 >
-                <span class="deleteIcon" @click="deleteToDo(todo.id)">✕</span>
-                {{todo.title}}
-                <span class="secondary-content">
-                    <label>
-                        <input 
-                            type="checkbox"
-                            class="filled-in" 
-                            :checked="todo.isCompleted"
-                            @change="completedPressed(todo.id, $event)"
-                        />
-                        <span></span>
-                    </label>
-                </span>
+                <div class="column">                     
+                    <div class="row">
+                         <span class="deleteIcon" @click="deleteToDo(todo.id)">
+                             <i class='material-icons md18'>delete_forever</i>
+                             </span> 
+                            <span>{{formattedDate(todo.createdAt)}}</span>
+                            <!-- <span>{{formattedDate(todo.timeLeft)}}</span> -->
+                        <span class="secondary-content">
+                            <label>
+                                <input 
+                                    type="checkbox"
+                                    class="filled-in" 
+                                    :checked="todo.isCompleted"
+                                    @change="completedPressed(todo.id, $event)"
+                                />
+                                <span></span>                                
+                            </label>
+                        </span>
+                    </div>                    
+                    <h5>
+                        {{todo.title}} 
+                    </h5>
+                    <p>
+                        {{todo.info}}
+                    </p>
+                </div>
             </li>   
         </ul>
     </section>
@@ -41,21 +73,24 @@
 <script>
 import navigation from "@/components/NavBar.vue";
 import firebase from "firebase";
-
 export default {
     data() {
-    return {
-        todos: [],
-        todo: {
-            title: "",
-        }
-    };
-},
+        return {            
+            todos: [],
+            todo: {
+                title: ''
+            }
+        };
+    },
     created() {
         this.getTodos();
-    },
-    components: { navigation }, 
-    methods: {
+    },   
+    components: { navigation },
+    methods: {        
+        formattedDate(inDate) {
+            return (new Date(inDate).toLocaleTimeString("ru-RU").toString() +
+          " " + new Date(inDate).toLocaleDateString("ru-RU").toString());
+        },
         addTodo() {
             firebase
                 .firestore()
@@ -74,12 +109,14 @@ export default {
                 .collection("users")
                 .doc(firebase.auth().currentUser.uid)
                 .collection("todos");
-
             todosRef.onSnapshot(snap => {
+                let timeServer = firebase.firestore.Timestamp.now();
                 this.todos = [];
                 snap.forEach(doc => {
                     let todo = doc.data();
                     todo.id = doc.id;
+                    todo.createdAt = doc.data().createdAt.seconds * 1000;   
+                    // todo.timeLeft = (timeServer.seconds - doc.data().createdAt.seconds) * 1000;
                     this.todos.push(todo);
                 });
             });
@@ -110,16 +147,22 @@ export default {
 </script>
 
 <style>
-    .collection.with-header {
-        max-width: 500px;
-        margin: 0 auto;
-    }
+.fade {
+    opacity: 0.4 !important;
+}
+li {
+    font-size: 1.1em;
+}
+.collection.with-header {
+    max-width: 500px;
+    margin: 0 auto;
+}
+.deleteIcon {
+    margin-right: 10px;
+    cursor: pointer;
+}
+.deleteIcon:hover {
+    opacity: 0.5;
+}
 
-    .deleteIcon {
-        margin-right: 10px;
-        cursor: pointer;
-    }
-    .deleteIcon:hover {
-        opacity: 0.5;
-    }
 </style>

@@ -4,7 +4,12 @@ import Vue from "vue";
 import App from "./App";
 import router from "./router";
 import firebase from "firebase";
+import VueMaterial from "vue-material";
+import "vue-material/dist/vue-material.css";
+
 Vue.config.productionTip = false;
+
+Vue.use(VueMaterial);
 
 const firebaseConfig = {
   apiKey: "AIzaSyBShWSJjn7sszSDWjJRbxFksLT0_YuOfxE",

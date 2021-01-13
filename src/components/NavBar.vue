@@ -2,14 +2,19 @@
     <nav>
         <div class="nav-wrapper">
             <!-- <a href="#" class="brand-logo">Logo</a> -->
-            <router-link to="/" class="brand-logo" tag="a">Заметки</router-link>
+            <router-link to="/" class="brand-logo left" tag="a">
+             
+            <span class='material-icons'>list_alt</span>
+            </router-link>
 
             <ul id="nav-mobile" class="right">
                  <li v-show="user">
-                    <router-link to="/todo">Список заметок</router-link>
+                    <router-link to="/todo">Список</router-link>
                 </li>
                 <li v-show="!user">
-                    <router-link to="/login">Вход</router-link>
+                    <router-link to="/login">
+                    <i class='material-icons md24'>login</i>
+                    </router-link>
                 </li>
                 <li v-show="user">
                     <router-link to="/profile">Профиль</router-link>
